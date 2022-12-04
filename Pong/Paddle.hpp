@@ -14,4 +14,7 @@ public:
 
 	void MoveUp();
 	void MoveDown(unsigned short _window_height);
+
+	char GetScore() const;
+	const SDL_Rect* GetScoreRectPointer();
 };

@@ -1,6 +1,6 @@
 #include "Game_object.hpp"
-#include <string>
 
+#include "SDL_image.h"
 Game_object::Game_object(SDL_Renderer* _renderer, const char* _path_to_image, const PositionStruct& _start_position, const SizeStruct& _start_size, const SpeedStruct& _start_speed)
 {
 	this->position_and_size.x = _start_position.X;
@@ -25,11 +25,10 @@ Game_object::~Game_object()
 
 void Game_object::Draw(SDL_Renderer* m_renderer)
 {
-	if (SDL_RenderCopy(m_renderer, image, NULL, &position_and_size))  //0 is a success
+	if (SDL_RenderCopy(m_renderer, image, nullptr, &position_and_size))  //0 is a success
 	{
-		throw "Error at rednder image";
+		throw SDL_GetError();
 	}
-	
 }
 
 void Game_object::SetPositionXY(int _X, int _Y)

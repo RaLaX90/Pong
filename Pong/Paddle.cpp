@@ -30,3 +30,13 @@ void Paddle::MoveDown(unsigned short _window_height)
 		position_and_size.y += speed.Y;
 	}
 }
+
+char Paddle::GetScore() const
+{
+	return m_score;
+}
+
+const SDL_Rect* Paddle::GetScoreRectPointer()
+{
+	return &m_score_rect;
+}
