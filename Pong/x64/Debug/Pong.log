@@ -1,0 +1,3 @@
+﻿  Game.cpp
+D:\Other\Pet_projects\Pong\Pong\Game.cpp(84,27): warning C4018: '>': signed/unsigned mismatch
+  Pong.vcxproj -> D:\Other\Pet_projects\Pong\x64\Debug\Pong.exe
