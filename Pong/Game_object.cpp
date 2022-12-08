@@ -47,12 +47,12 @@ void Game_object::SetPositionY(int _Y)
 	position_and_size.y = _Y;
 }
 
-SDL_Rect Game_object::GetRect() const
+SDL_Rect Game_object::GetPositionAndSize() const
 {
 	return position_and_size;
 }
 
-const SDL_Rect* Game_object::GetRectPointer()
+const SDL_Rect* Game_object::GetPositionAndSizePointer() const
 {
 	return &position_and_size;
 }

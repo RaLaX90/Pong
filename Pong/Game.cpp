@@ -6,10 +6,6 @@ Game::Game()
 		throw "Error at sdl_init";
 	}
 
-	if (TTF_Init() != 0) {
-		throw "Error at TTF_Init";
-	}
-
 	//if (IMG_Init(IMG_INIT_PNG) != 0) {
 	//	throw "Error at IMG_Init";
 	//}
@@ -32,6 +28,7 @@ Game::Game()
 		PositionStruct{ 10, (window->GetScreenHeight() / 2) - PADDLE_HEIGHT },
 		SizeStruct{ PADDLE_WIDTH, PADDLE_HEIGHT },
 		SpeedStruct{ 0, INITIAL_PADDLE_SPEED_Y },
+		//m_scoreFont,
 		SDL_Rect{ window->GetMapWidth() / 3, window->GetMapHeight() / 4 , 50, 120 }
 	);
 
@@ -41,8 +38,11 @@ Game::Game()
 		PositionStruct{ window->GetScreenWidth() - PADDLE_WIDTH - 10, (window->GetScreenHeight() / 2) - PADDLE_HEIGHT },
 		SizeStruct{ PADDLE_WIDTH, PADDLE_HEIGHT },
 		SpeedStruct{ 0, INITIAL_PADDLE_SPEED_Y },
+		//m_scoreFont,
 		SDL_Rect{ (window->GetMapWidth() / 3) * 2, window->GetMapHeight() / 4 , 50, 120 }
 	);
+
+	
 
 	ball = std::make_unique<Ball>(
 		window->GetRenderer(),
@@ -51,20 +51,11 @@ Game::Game()
 		SizeStruct{ BALL_WIDTH, BALL_HEIGHT },
 		SpeedStruct{ INITIAL_BALL_SPEED_X, INITIAL_BALL_SPEED_Y }
 	);
-
-	m_scoreFont = TTF_OpenFont("../res/fonts/OpenSans-Bold.ttf", 400);
-	if (m_scoreFont == nullptr)
-	{
-		throw "Failed to load the font";
-	}
 }
 
 Game::~Game()
 {
-	TTF_CloseFont(m_scoreFont);
-
 	//IMG_Quit();
-	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -76,45 +67,22 @@ void Game::resetRound()
 	ball->SetPositionX(window->GetScreenWidth() / 2);
 }
 
-void Game::drawScore(Paddle paddle)
-{
-	Window* window = Window::GetInstance(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	SDL_Color White = { 200, 200, 200, 255 };
-
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(m_scoreFont, std::to_string(paddle.GetScore()).c_str(), White);
-
-	SDL_Texture* Message = SDL_CreateTextureFromSurface(window->GetRenderer(), surfaceMessage);
-
-	SDL_FreeSurface(surfaceMessage);
-
-	SDL_Rect Message_rect;
-	Message_rect.x = window->GetMapWidth() / 3;
-	Message_rect.y = window->GetMapHeight() / 4;
-	Message_rect.w = 100;
-	Message_rect.h = 100;
-
-	SDL_RenderCopy(window->GetRenderer(), Message, NULL, paddle.GetScoreRectPointer());
-
-	SDL_DestroyTexture(Message);
-}
-
 void Game::Update()
 {
 	current_time = SDL_GetTicks();
 
 	Window* window = Window::GetInstance(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	ball->Move(window->GetScreenHeight(), player1->GetRectPointer(), player2->GetRectPointer());
+	ball->Move(window->GetScreenHeight(), player1->GetPositionAndSizePointer(), player2->GetPositionAndSizePointer());
 
-	if (ball->GetRect().x + ball->GetRect().w < 0)
+	if (ball->GetPositionAndSize().x + ball->GetPositionAndSize().w < 0)
 	{
-		player1->addScore();
+		player2->AddScore();
 		resetRound();
 	}
-	else if (ball->GetRect().x > window->GetScreenWidth())
+	else if (ball->GetPositionAndSize().x > window->GetScreenWidth())
 	{
-		player2->addScore();
+		player1->AddScore();
 		resetRound();
 	}
 
@@ -187,14 +155,15 @@ void Game::DrawAll()
 	SDL_SetRenderDrawColor(window->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 
 	player1->Draw(window->GetRenderer());
+	player1->DrawScore(window->GetRenderer());
+
 	player2->Draw(window->GetRenderer());
+	player2->DrawScore(window->GetRenderer());
 
 	ball->Draw(window->GetRenderer());
-	//drawScore(*player1.get()); //TODO (work, but throw a exception)
-	//drawScore(*player2.get());
 
 	SDL_Rect rect;
-	int height = 0;
+	unsigned short height = 0;
 	while (height < WINDOW_HEIGHT)
 	{
 		rect = { WINDOW_WIDTH / 2, height, 5, 30 };

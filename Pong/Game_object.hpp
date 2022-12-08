@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-#include "SDL_image.h"
+#include <SDL_image.h>
 
 struct PositionStruct {
 	int X;
@@ -36,8 +36,8 @@ public:
 	void SetPositionX(int _X);
 	void SetPositionY(int _Y);
 
-	SDL_Rect GetRect() const;
-	const SDL_Rect* GetRectPointer();
+	SDL_Rect GetPositionAndSize() const;
+	const SDL_Rect* GetPositionAndSizePointer() const;
 
 	int GetPositionX() const;
 	int GetPositionY() const;
