@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game_object.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.hpp" />
     <ClInclude Include="Ball.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Game_object.hpp" />

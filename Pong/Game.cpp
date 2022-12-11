@@ -28,7 +28,6 @@ Game::Game()
 		PositionStruct{ 10, (window->GetScreenHeight() / 2) - PADDLE_HEIGHT },
 		SizeStruct{ PADDLE_WIDTH, PADDLE_HEIGHT },
 		SpeedStruct{ 0, INITIAL_PADDLE_SPEED_Y },
-		//m_scoreFont,
 		SDL_Rect{ window->GetMapWidth() / 3, window->GetMapHeight() / 4 , 50, 120 }
 	);
 
@@ -37,12 +36,9 @@ Game::Game()
 		"../res/icons/paddle.bmp",
 		PositionStruct{ window->GetScreenWidth() - PADDLE_WIDTH - 10, (window->GetScreenHeight() / 2) - PADDLE_HEIGHT },
 		SizeStruct{ PADDLE_WIDTH, PADDLE_HEIGHT },
-		SpeedStruct{ 0, INITIAL_PADDLE_SPEED_Y },
-		//m_scoreFont,
+		SpeedStruct{ 0, 3 },
 		SDL_Rect{ (window->GetMapWidth() / 3) * 2, window->GetMapHeight() / 4 , 50, 120 }
 	);
-
-	
 
 	ball = std::make_unique<Ball>(
 		window->GetRenderer(),
@@ -67,23 +63,66 @@ void Game::resetRound()
 	ball->SetPositionX(window->GetScreenWidth() / 2);
 }
 
+bool Game::isCollision(const SDL_Rect* _object1, const SDL_Rect* _object2) const
+{
+	return SDL_HasIntersection(_object1, _object2);
+}
+
 void Game::Update()
 {
 	current_time = SDL_GetTicks();
 
+	ball->Move();
+
 	Window* window = Window::GetInstance(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	ball->Move(window->GetScreenHeight(), player1->GetPositionAndSizePointer(), player2->GetPositionAndSizePointer());
+	SDL_Rect ball_position_and_size = ball->GetPositionAndSize();
 
-	if (ball->GetPositionAndSize().x + ball->GetPositionAndSize().w < 0)
 	{
-		player2->AddScore();
-		resetRound();
+		Audio* audio = Audio::GetInstance();
+
+		SDL_Rect player1_position_and_size = player1->GetPositionAndSize();
+		SDL_Rect player2_position_and_size = player2->GetPositionAndSize();
+
+		if (ball_position_and_size.y <= 0 || (ball_position_and_size.y + ball_position_and_size.h > window->GetScreenHeight())) //if ball trying to go beyond the bottom and top
+		{
+			ball->SetDirectionY(-ball->GetDirectionY());
+		}
+		else if (isCollision(&ball_position_and_size, &player1_position_and_size)) { //if ball have collistion with first player
+			if (ball_position_and_size.x + abs(ball->GetDirectionX()) < player1_position_and_size.x + player1_position_and_size.w) {
+				ball->SetDirectionY(-ball->GetDirectionY());
+			}
+			else {
+				ball->SetDirectionX(-ball->GetDirectionX());
+			}
+
+			audio->PlayEffect(Audio::EffectType::hit_paddle);
+		}
+		else if (isCollision(&ball_position_and_size, &player2_position_and_size)) { //if ball have collistion with second player
+			if ((ball_position_and_size.x + ball_position_and_size.w) - ball->GetDirectionX() > player2_position_and_size.x) {
+				ball->SetDirectionY(-ball->GetDirectionY());
+			}
+			else {
+				ball->SetDirectionX(-ball->GetDirectionX());
+			}
+
+			audio->PlayEffect(Audio::EffectType::hit_paddle);
+		}
 	}
-	else if (ball->GetPositionAndSize().x > window->GetScreenWidth())
+
+	player2->AIMove(window->GetScreenHeight(), &ball_position_and_size);
+
 	{
-		player1->AddScore();
-		resetRound();
+		if (ball_position_and_size.x + ball_position_and_size.w < 0)
+		{
+			player2->AddScore();
+			resetRound();
+		}
+		else if (ball_position_and_size.x > window->GetScreenWidth())
+		{
+			player1->AddScore();
+			resetRound();
+		}
 	}
 
 	// Clamping FPS.
@@ -97,7 +136,6 @@ void Game::Update()
 void Game::HandleEvents()
 {
 	while (SDL_PollEvent(&event)) {
-
 		switch (event.type)
 		{
 		case SDL_QUIT: {
@@ -118,16 +156,6 @@ void Game::HandleEvents()
 				Window* window = Window::GetInstance(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 				player1->MoveDown(window->GetScreenHeight());
-				break;
-			}
-			case SDLK_UP: {
-				player2->MoveUp();
-				break;
-			}
-			case SDLK_DOWN: {
-				Window* window = Window::GetInstance(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-				player2->MoveDown(window->GetScreenHeight());
 				break;
 			}
 			default: {

@@ -13,7 +13,7 @@ class Paddle : public Game_object
 	SDL_Rect m_score_rect;
 
 public:
-	Paddle(SDL_Renderer* _renderer, const char* _path_to_image, const PositionStruct& _start_position, const SizeStruct& _start_size, const SpeedStruct& _start_speed/*, TTF_Font* font*/, SDL_Rect _score_rect);
+	Paddle(SDL_Renderer* _renderer, const char* _path_to_image, const PositionStruct& _start_position, const SizeStruct& _start_size, const SpeedStruct& _start_speed, SDL_Rect _score_rect);
 	~Paddle();
 
 	void AddScore();
@@ -22,6 +22,8 @@ public:
 
 	void MoveUp();
 	void MoveDown(unsigned short _window_height);
+
+	void AIMove(unsigned short _window_height, const SDL_Rect* _ball_position_and_size);
 
 	char GetScore() const;
 	const SDL_Rect* GetScoreRectPointer() const;

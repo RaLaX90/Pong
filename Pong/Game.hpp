@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "Window.hpp"
+#include "Audio.hpp"
 #include "Paddle.hpp"
 #include "Ball.hpp"
 #include "Global.hpp"
@@ -46,6 +47,7 @@ private:
 	//std::uniform_int_distribution<short> m_distribution_direction_y;
 
 	void resetRound();
+	bool isCollision(const SDL_Rect* _object1, const SDL_Rect* _object2) const;
 
 public:
 	Game();
