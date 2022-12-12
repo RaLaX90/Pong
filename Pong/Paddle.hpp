@@ -9,7 +9,7 @@
 class Paddle : public Game_object
 {
 	char m_score;
-	TTF_Font* m_score_font; //TODO (make with smart pointer)
+	TTF_Font* m_score_font;
 	SDL_Rect m_score_rect;
 
 public:

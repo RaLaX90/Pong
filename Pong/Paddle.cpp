@@ -59,10 +59,13 @@ void Paddle::MoveDown(unsigned short _window_height)
 
 void Paddle::AIMove(unsigned short _window_height, const SDL_Rect* _ball_position_and_size)
 {
-	if (_ball_position_and_size->y > position_and_size.y + (position_and_size.h / 2)) {
+	auto ball_position_center_y = _ball_position_and_size->y + (_ball_position_and_size->h / 2);
+	auto paddle_position_center_y = position_and_size.y + (position_and_size.h / 2);
+
+	if (ball_position_center_y > paddle_position_center_y) {
 		MoveDown(_window_height);
 	}
-	else if (_ball_position_and_size->y < position_and_size.y + (position_and_size.h / 2)) {
+	else if (ball_position_center_y < paddle_position_center_y) {
 		MoveUp();
 	}
 }

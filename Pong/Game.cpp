@@ -36,7 +36,7 @@ Game::Game()
 		"../res/icons/paddle.bmp",
 		PositionStruct{ window->GetScreenWidth() - PADDLE_WIDTH - 10, (window->GetScreenHeight() / 2) - PADDLE_HEIGHT },
 		SizeStruct{ PADDLE_WIDTH, PADDLE_HEIGHT },
-		SpeedStruct{ 0, 3 },
+		SpeedStruct{ 0, 3 }, //TODO (nonglobal value)
 		SDL_Rect{ (window->GetMapWidth() / 3) * 2, window->GetMapHeight() / 4 , 50, 120 }
 	);
 
